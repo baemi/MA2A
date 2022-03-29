@@ -1,0 +1,16 @@
+.vtp-setting-panel {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  bottom: 0;
+  background-color: white;
+  width: 100vw;
+
+  transition: all 0.3s;
+
+  overflow: auto;
+}
+
+.vtp-setting-panel.open {
+  left: 0;
+}
