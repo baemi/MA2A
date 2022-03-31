@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { toonationKeyState } from '../store/donation';
 
 import { Row, Col, Card, Input, Button, Tooltip } from 'antd';
@@ -8,10 +8,7 @@ import { PoweroffOutlined, DisconnectOutlined } from '@ant-design/icons';
 import { openFailedNotification, openInfoNotification, openSuccessNotification } from '../util/noti';
 
 import * as VtpMessage from '../vtp/message';
-import { vtpTriggerListState } from '../store/vtp';
-
-const Toonation = require('../donation/toonation');
-
+import { Toonation } from '../donation/toonation';
 
 export default function ToonationSettingInput() {
   const [connected, setConnected] = useState(false);
@@ -22,49 +19,57 @@ export default function ToonationSettingInput() {
 
   const [toonation, setToonation] = useState(null);
 
+  // const Toonation = window.require('../donation/toonation');
+
   const handleChange = (e) => {
     setToonationKey(e.target.value);
   }
 
   const connectToonationAlert = async () => {
-    setConnectionLoading(true);
-
     if(!toonationKey) {
       openInfoNotification('투네이션 키를 입력해주세요.');
       return;
     }
 
-    // 투네이션 알림 연동
-    const toonation = new Toonation(toonationKey);
-    await toonation.connect((eventName, data) => {
-      switch(eventName) {
-        case 'connect': {
-          if(data) {
-            setToonation(toonation);
-            openSuccessNotification('성공적으로 연결되었습니다.');
-          } else {
-            openFailedNotification('연결에 실패하였습니다.');
-          }
-    
-          setConnected(data);
-          break;
-        }
-        case 'message': {
-          handleToonationMessage(data);
-          break;
-        }
-        case 'close': {
-          openInfoNotification('투네이션 연결이 해제되었습니다.');
-          setConnected(false);
-          break;
-        }
-        default: {
-          // none
-        }
-      }
+    setConnectionLoading(true);
 
+    // 투네이션 알림 연동
+    try {
+      const toonation = new Toonation(toonationKey);
+      await toonation.connect((eventName, data) => {
+        switch(eventName) {
+          case 'connect': {
+            if(data) {
+              setToonation(toonation);
+              openSuccessNotification('성공적으로 연결되었습니다.');
+            } else {
+              openFailedNotification('연결에 실패하였습니다.');
+            }
+      
+            setConnected(data);
+            break;
+          }
+          case 'message': {
+            handleToonationMessage(data);
+            break;
+          }
+          case 'close': {
+            openInfoNotification('투네이션 연결이 해제되었습니다.');
+            setConnected(false);
+            break;
+          }
+          default: {
+            // none
+          }
+        }
+
+        setConnectionLoading(false);
+      });
+    } catch (e) {
       setConnectionLoading(false);
-    });
+      console.error(e);
+    }
+    
   }
 
   const handleToonationMessage = (toonationMsg) => {
@@ -73,13 +78,10 @@ export default function ToonationSettingInput() {
     const content = toonationMsg.content;
     const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex ;
 
-    console.log('toonation:', onlyTxtDona);
-
     if(onlyTxtDona) {
       const amount = content.amount;
 
       const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '투네이션'));
-      console.log('toonation:', trigger);
 
       if(trigger && trigger.useAt) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);

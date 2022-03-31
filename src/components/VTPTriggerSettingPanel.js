@@ -1,13 +1,13 @@
 import './panel.css';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { selectedVtpTriggerState, vtpTriggerListState } from '../store/vtp';
 
 import { Row, Col, Card, Button, Space } from 'antd';
 import { CloseOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 
-import VTPThrowTriggerList from './VTPThrowTriggerList';
+import VTPTriggerList from './VTPTriggerList';
 import VTPTriggerForm from './VTPTriggerForm';
 import { openFailedNotification, openSuccessNotification } from '../util/noti';
 
@@ -20,6 +20,9 @@ export default function VTPTriggerSettingPanel() {
   const [selectedVtpTrigger, setSelectedVtpTrigger] = useRecoilState(selectedVtpTriggerState);
   const [vtpTriggerList, setVtpTriggerList] = useRecoilState(vtpTriggerListState);
 
+  useEffect(() => {
+    window.vtpTriggerList = vtpTriggerList;
+  }, [vtpTriggerList]);
 
   // VTP 설정 패널 닫기
   const closeVTPSettingPanel = () => {
@@ -42,13 +45,16 @@ export default function VTPTriggerSettingPanel() {
     };
 
     try {
-      const filepath = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), options);
-      const fileBuffer = electronFs.readFileSync(filepath[0]);
-      const uploadedVtpTriggerList = JSON.parse(fileBuffer);
+      const filepath = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), options);
 
-      setVtpTriggerList(uploadedVtpTriggerList);
+      if(!filepath.canceled) {
+        const fileBuffer = electronFs.readFileSync(filepath.filePaths[0]);
+        const uploadedVtpTriggerList = JSON.parse(fileBuffer);
+  
+        setVtpTriggerList(uploadedVtpTriggerList);
 
-      openSuccessNotification('가져오기 성공');
+        openSuccessNotification('가져오기 성공');
+      }  
     } catch (e) {
       openFailedNotification('잘못된 파일입니다.');
     }
@@ -93,7 +99,7 @@ export default function VTPTriggerSettingPanel() {
       <Row style={{ height: '100%'}}>
         {/* VTP 트리거 목록 */}
         <Col span={16}>
-          <VTPThrowTriggerList handleCustomItemUseChange={handleCustomItemUseChange} />
+          <VTPTriggerList handleCustomItemUseChange={handleCustomItemUseChange} />
         </Col>
         {/* VTP 폼 */}
         <Col span={8}>

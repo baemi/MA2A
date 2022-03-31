@@ -56,8 +56,12 @@ export default function VTPTriggerForm() {
     setSelectedVtpTrigger({ ...selectedVtpTrigger, count: value });
   }
 
-  const handleItemIndexChange = (value) => {
-    setSelectedVtpTrigger({ ...selectedVtpTrigger, itemIndex: value });
+  const handleItemIndexChange = (value, option) => {
+    const itemIndex = value;
+    const itemName = option.children;
+    console.log(option);
+
+    setSelectedVtpTrigger({ ...selectedVtpTrigger, itemIndex: itemIndex, itemName: itemName });
   }
 
   const handleCustomItemIndexChange = (value, option) => {

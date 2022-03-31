@@ -4,7 +4,7 @@ const WebSocketClient = WebSocket.client;
 const request = window.require('request');
 const requestPromise = util.promisify(request);
 
-module.exports = class Twip {
+export class Twip {
   constructor(key) {
     this.key = key;
 

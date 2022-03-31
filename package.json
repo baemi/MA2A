@@ -1,67 +1,75 @@
 {
-  "name": "MoneyAttackToAngjyu",
-  "version": "0.1.0",
-  "homepage": "./",
-  "description": "MA2A, MoneyAttackToAngjyu",
-  "main": "public/electron.js",
-  "scripts": {
-    "start": "concurrently \"npm run react:start\" \"npm run electron:start MODE=dev\"",
-    "react:start": "react-scripts start",
-    "react:build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron:start": "wait-on http://localhost:3000 && electron .",
-    "build": "npm run react:build && electron-builder --publish=always"
-  },
-  "build": {
-    "asar": "false",
-    "appId": "dev.baemi.attact2angjyu",
-    "files": [
-      "build/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "buildResources": "assets"
+    "name": "MA2A",
+    "version": "0.1.0",
+    "homepage": "./",
+    "description": "MA2A, MoneyAttackToAngjyu",
+    "main": "public/electron.js",
+    "scripts": {
+        "start": "concurrently \"npm run react:start\" \"npm run electron:start MODE=dev\"",
+        "react:start": "react-scripts start",
+        "react:build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "electron:start": "wait-on http://localhost:3000 && electron .",
+        "build": "npm run react:build && electron-builder --publish=always"
+    },
+    "build": {
+        "asar": "false",
+        "appId": "dev.baemi.attact2angjyu",
+        "win": {
+            "target": [
+                "nsis"
+            ],
+            "icon": "./build/icon.png"
+        },
+        "directories": {
+            "buildResources": "build",
+            "output": "release"
+        },
+        "files": [
+            "resources/**/*",
+            "build/**/*",
+            "node_modules/**/*"
+        ]
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^5.16.3",
+        "@testing-library/react": "^12.1.4",
+        "@testing-library/user-event": "^13.5.0",
+        "antd": "^4.19.3",
+        "concurrently": "^7.0.0",
+        "electron": "^17.2.0",
+        "electron-builder": "^22.14.13",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-scripts": "5.0.0",
+        "recoil": "^0.6.1",
+        "wait-on": "^6.0.1"
+    },
+    "dependencies": {
+        "@electron/remote": "^2.0.8",
+        "console-stamp": "^3.0.2",
+        "node-fetch": "^2.6.1",
+        "request": "^2.88.2",
+        "web-vitals": "^2.1.4",
+        "websocket": "^1.0.34"
     }
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@electron/remote": "^2.0.8",
-    "@testing-library/jest-dom": "^5.16.3",
-    "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^13.5.0",
-    "antd": "^4.19.3",
-    "concurrently": "^7.0.0",
-    "electron": "^17.2.0",
-    "electron-builder": "^22.14.13",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
-    "recoil": "^0.6.1",
-    "wait-on": "^6.0.1"
-  },
-  "dependencies": {
-    "console-stamp": "^3.0.2",
-    "node-fetch": "^2.6.1",
-    "request": "^2.88.2",
-    "web-vitals": "^2.1.4",
-    "websocket": "^1.0.34"
-  }
 }

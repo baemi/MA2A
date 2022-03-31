@@ -28,6 +28,10 @@ export default function VTPSettingInput() {
     window.vtpSocket = vtpSocket;
   }, [vtpSocket]);
 
+  useEffect(() => {
+    window.vtpTriggerList = vtpTriggerList;
+  }, [vtpTriggerList]);
+
   const handleChange = (e) => {
     // eslint-disable-next-line default-case
     switch(e.target.name) {

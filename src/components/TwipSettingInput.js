@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { twipKeyState } from '../store/donation';
 
 import { Row, Col, Card, Input, Button, Tooltip } from 'antd';
@@ -8,8 +8,8 @@ import { PoweroffOutlined, DisconnectOutlined } from '@ant-design/icons';
 import { openFailedNotification, openInfoNotification, openSuccessNotification } from '../util/noti';
 
 import * as VtpMessage from '../vtp/message';
+import { Twip } from '../donation/twip';
 
-const Twip = require('../donation/twip');
 
 export default function TwipSettingInput() {
   const [connected, setConnected] = useState(false);
@@ -67,15 +67,15 @@ export default function TwipSettingInput() {
 
   const handleTwipMessage = (twipMsg) => {
     console.log('twip:', twipMsg);
-    
+
     const onlyTxtDona = null === twipMsg.variation_id;
 
     if(onlyTxtDona) {
       const amount = twipMsg.amount;
 
-      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount);
+      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '트윕'));
 
-      if(trigger && trigger.useAt && trigger.platform.find(platform => platform === '트윕')) {
+      if(trigger && trigger.useAt) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);
       }
     }

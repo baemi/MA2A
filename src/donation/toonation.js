@@ -4,7 +4,7 @@ const WebSocketClient = WebSocket.client;
 const request = window.require('request');
 const requestPromise = util.promisify(request);
 
-module.exports = class Toonation {
+export class Toonation {
   constructor(key) {
     this.key = key;
 

@@ -46,9 +46,7 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
         if(text === 'VTP_Drop') {
           methodName = '떨구기'
         }
-        return (
-          <span>{methodName}</span>
-        )
+        return methodName
       }
     },
     {
@@ -61,11 +59,11 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       dataIndex: 'platform',
       render: (platformList) => {
         return (
-          <div>
+          <>
           {
             platformList.map(platform => <Tag color={platform === '투네이션' ? '#29b5f6' : '#801fe8'} key={platform}>{platform}</Tag>)
           }
-          </div>
+          </>
         )
 
       }
@@ -74,6 +72,16 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       title: '개수',
       dataIndex: 'count',
       key: 'count',
+    },
+    {
+      title: '아이템',
+      render: (text, item) => {
+        if(item.isCustomItem) {
+          return item.customItemName;
+        } else {
+          return item.itemName;
+        }
+      }
     },
     {
       title: '데미지',
@@ -111,7 +119,7 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       rowKey={(record) => (record.triggerName)}
       pagination={false}
       style={{ position: 'absolute', overflow: 'auto', top: 0, bottom: 0, left: 0, right: '20px' }}
-      scroll={{ y: 320 }}
+      scroll={{ y: 520 }}
     />
   )
 }

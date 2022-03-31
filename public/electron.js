@@ -1,18 +1,20 @@
-const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
+const { app, BrowserWindow, globalShortcut } = require('electron');
 const path = require('path');
 require('@electron/remote/main').initialize();
 
-process.env.MODE='dev';
+// process.env.MODE='dev';
 
 app.whenReady().then(() => {
   const winOptions = {
     width: 1200,  
-    height: 650,
+    height: 800,
     minWidth: 1200,
-    minHeight: 650,
+    minHeight: 800,
+    show: false,
+    // icon: path.join(__dirname, 'public/angjyu_logo256.ico'),
     webPreferences: {  
       nodeIntegration: true, 
-      contextIsolation : false, 
+      contextIsolation : false
     } 
   };
 
@@ -34,19 +36,54 @@ app.whenReady().then(() => {
     win.loadFile(
       `${path.join(__dirname, '../build/index.html')}`
     );
+    // win.webContents.openDevTools();
   }
+
+  const splash = new BrowserWindow({
+    width: 1200,  
+    height: 800,
+    minWidth: 1200,
+    minHeight: 800,
+    frame: false,
+    alwaysOnTop: true,
+    transparent: true
+  });
+
+  splash.center();
+  if (process.env.MODE === 'dev') {
+    splash.loadFile(
+      `${path.join(__dirname, 'splash.html')}`
+    );
+  } else {
+    splash.loadFile(
+      `${path.join(__dirname, '../build/splash.html')}`
+    );
+  }
+
+  setTimeout(() => {
+    splash.close();
+    win.show();
+  }, 7000);
 });
 
 app.on('window-all-closed', () => {
   app.quit();
 });
 
-// app.on('browser-window-focus', function () {
-//   // 글로벌로 동작하여 다른 크롬 브라우저도 새로고침이 안먹는 현상 발생(수정 예정)
-//   globalShortcut.register("CommandOrControl+R", () => {
-//       console.log("CommandOrControl+R is pressed: Shortcut Disabled");
-//   });
-//   globalShortcut.register("F5", () => {
-//       console.log("F5 is pressed: Shortcut Disabled");
-//   });
-// });
+
+if(process.env.MODE !== 'dev') {
+  app.on('browser-window-focus', function () {
+    globalShortcut.register("CommandOrControl+R", () => {
+        console.log("CommandOrControl+R is pressed: Shortcut Disabled");
+    });
+    globalShortcut.register("F5", () => {
+        console.log("F5 is pressed: Shortcut Disabled");
+    });
+  });
+  
+  app.on('browser-window-blur', function () {
+    globalShortcut.unregister('CommandOrControl+R');
+    globalShortcut.unregister('F5');
+  });
+  
+}

@@ -44,8 +44,9 @@ export const selectedVtpTriggerState = atom({
     donationAmount: 1000,  // 후원 금액
     count: 1,  // 갯수
     itemIndex: -1,
+    itemName: '랜덤',
     customItemIndex: -1,
-    customItemName: '',
+    customItemName: '랜덤',
     customItemHash: null,
     isCustomItem: false,
     damage: 0,
