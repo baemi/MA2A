@@ -1,46 +1,44 @@
-import React from 'react';
+import React from 'react'
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { toonationKeyState } from '../store/donation';
+import { twipKeyState } from '../store/donation';
 
 import { Row, Col, Card, Input, Button, Tooltip } from 'antd';
 import { PoweroffOutlined, DisconnectOutlined } from '@ant-design/icons';
 import { openFailedNotification, openInfoNotification, openSuccessNotification } from '../util/noti';
 
 import * as VtpMessage from '../vtp/message';
-import { vtpTriggerListState } from '../store/vtp';
 
-const Toonation = require('../donation/toonation');
+const Twip = require('../donation/twip');
 
-
-export default function ToonationSettingInput() {
+export default function TwipSettingInput() {
   const [connected, setConnected] = useState(false);
   const [disconnectingLoading, setDisconnectingLoading] = useState(false);
   const [connectionLoading, setConnectionLoading] = useState(false);
 
-  const [toonationKey, setToonationKey] = useRecoilState(toonationKeyState);
+  const [twipKey, setTwipKey] = useRecoilState(twipKeyState);
 
-  const [toonation, setToonation] = useState(null);
+  const [twip, setTwip] = useState(null);
 
   const handleChange = (e) => {
-    setToonationKey(e.target.value);
+    setTwipKey(e.target.value);
   }
 
-  const connectToonationAlert = async () => {
+  const connectTwipAlert = async () => {
     setConnectionLoading(true);
 
-    if(!toonationKey) {
-      openInfoNotification('투네이션 키를 입력해주세요.');
+    if(!twipKey) {
+      openInfoNotification('트윕 키를 입력해주세요.');
       return;
     }
 
     // 투네이션 알림 연동
-    const toonation = new Toonation(toonationKey);
-    await toonation.connect((eventName, data) => {
+    const twip = new Twip(twipKey);
+    await twip.connect((eventName, data) => {
       switch(eventName) {
         case 'connect': {
           if(data) {
-            setToonation(toonation);
+            setTwip(twip);
             openSuccessNotification('성공적으로 연결되었습니다.');
           } else {
             openFailedNotification('연결에 실패하였습니다.');
@@ -50,11 +48,11 @@ export default function ToonationSettingInput() {
           break;
         }
         case 'message': {
-          handleToonationMessage(data);
+          handleTwipMessage(data);
           break;
         }
         case 'close': {
-          openInfoNotification('투네이션 연결이 해제되었습니다.');
+          openInfoNotification('트윕 연결이 해제되었습니다.');
           setConnected(false);
           break;
         }
@@ -67,39 +65,35 @@ export default function ToonationSettingInput() {
     });
   }
 
-  const handleToonationMessage = (toonationMsg) => {
-    console.log('toonation:', toonationMsg);
-
-    const content = toonationMsg.content;
-    const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex ;
-
-    console.log('toonation:', onlyTxtDona);
+  const handleTwipMessage = (twipMsg) => {
+    console.log('twip:', twipMsg);
+    
+    const onlyTxtDona = null === twipMsg.variation_id;
 
     if(onlyTxtDona) {
-      const amount = content.amount;
+      const amount = twipMsg.amount;
 
-      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '투네이션'));
-      console.log('toonation:', trigger);
+      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount);
 
-      if(trigger && trigger.useAt) {
+      if(trigger && trigger.useAt && trigger.platform.find(platform => platform === '트윕')) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);
       }
     }
   }
 
-  const disconnectToonationAlert = () => {
+  const disconnectTwipAlert = () => {
     setDisconnectingLoading(true);
-    toonation.disconnect();
-    setToonation(null);
+    twip.disconnect();
+    setTwip(null);
     setConnected(false);
     setDisconnectingLoading(false);
   }
 
   return (
-    <Card title='Toonation Alert 설정' bordered={false} style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}>
+    <Card title='Twip Alert 설정' bordered={false} style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}>
       <Row align='middle'>
         <Col flex="auto" style={{ padding: '4px'}}>
-          <Input.Password addonBefore='https://toon.at/widget/alertbox/' id='toonationKey' name='toonationKey' autoComplete='off' placeholder='투네이션 URL 끝 키를 입력하세요' style={{ height: 'inherited' }} value={toonationKey} onChange={handleChange} />
+          <Input.Password addonBefore='https://twip.kr/widgets/alertbox/' id='twipKey' name='twipKey' autoComplete='off' placeholder='트윕 URL 끝 키를 입력하세요' style={{ height: 'inherited' }} value={twipKey} onChange={handleChange} />
         </Col>
         <Col flex='24px' style={{ padding: '4px'}}>
           <Tooltip placement='top' title='연결'>
@@ -109,7 +103,7 @@ export default function ToonationSettingInput() {
               htmlType='button'
               shape='circle'
               loading={connectionLoading}
-              onClick={connectToonationAlert}
+              onClick={connectTwipAlert}
               icon={<PoweroffOutlined style={{ fontSize: '20px', color: `${connected ? '#bfbfbf' : '#1890ff'}` }} />} 
             />
           </Tooltip>
@@ -122,7 +116,7 @@ export default function ToonationSettingInput() {
               htmlType='button'
               shape='circle'
               loading={disconnectingLoading}
-              onClick={disconnectToonationAlert}
+              onClick={disconnectTwipAlert}
               icon={<DisconnectOutlined style={{ fontSize: '20px', color: `${!connected ? '#bfbfbf' : '#f5222d'}`}} />}
               />
           </Tooltip>

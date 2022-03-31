@@ -8,6 +8,7 @@ import ToonationSettingInput from './components/ToonationSettingInput';
 import VTPSettingInput from './components/VTPSettingInput';
 import VTPTriggerSettingPanel from './components/VTPTriggerSettingPanel';
 import { SettingOutlined } from '@ant-design/icons';
+import TwipSettingInput from './components/TwipSettingInput';
 
 
 function App() {
@@ -19,13 +20,13 @@ function App() {
   return (
     <RecoilRoot>
       <div id='app' className='app'>
-        
         <ToonationSettingInput />
         <br/>
+        <TwipSettingInput />
+        <br />
         <VTPSettingInput />
         <br />
         <Button onClick={openVTPSettingPanel} icon={<SettingOutlined />}>VTP 트리거 설정</Button>
-        
         <VTPTriggerSettingPanel />
       </div>
     </RecoilRoot>
