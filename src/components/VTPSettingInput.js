@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { vtpIpState, vtpPortState, vtpSocketState, vtpCustomItemPathState, vtpCustomItemListState } from '../store/vtp';
+import { vtpIpState, vtpPortState, vtpSocketState, vtpCustomItemPathState, vtpCustomItemListState, vtpTriggerListState } from '../store/vtp';
 
 import { Row, Col, Card, Input, Button, Tooltip } from 'antd';
 import { PoweroffOutlined, DisconnectOutlined } from '@ant-design/icons';
@@ -15,6 +15,7 @@ export default function VTPSettingInput() {
   const [vtpPort, setVtpPort] = useRecoilState(vtpPortState);
   const [vtpSocket, setVtpSocket] = useRecoilState(vtpSocketState);
   const [vtpCustomItemPath, setVtpCustomItemPath] = useRecoilState(vtpCustomItemPathState);
+  const [vtpTriggerList, setVtpTriggerList] = useRecoilState(vtpTriggerListState);
 
   const setCustomItemList = useSetRecoilState(vtpCustomItemListState);
 
@@ -73,6 +74,7 @@ export default function VTPSettingInput() {
         socket.onclose = (e) => {
           openInfoNotification('VTP 연결이 해제되었습니다.');
           setVtpSocket(null);
+          setConnected(false);
         }
       }
 
@@ -111,9 +113,33 @@ export default function VTPSettingInput() {
       if(error) {
         openFailedNotification('목록을 불러오는데 실패하였습니다.');
       } else {
-        // setCustomItemList(files);
-        console.log(files);
-        // openSuccessNotification('성공적으로 목록을 불러왔습니다.');
+        const customItemList = files.map((filename, index) => {
+          const filepath = electronPath.join(path, filename);
+          const fileBuffer = electronFs.readFileSync(filepath);
+          const hashSum = electronCrypto.createHash('md5');
+          hashSum.update(fileBuffer);
+          const hash = hashSum.digest('hex');
+
+          return { index: index, name: filename, hash: hash }
+        });
+
+        // 커스텀 아이템 변경에 따른 설정 갱신
+        const updateVtpTriggerList = vtpTriggerList.map(trigger => {
+          if(trigger.isCustomItem) {
+            const findCustomItem = customItemList.find(customItem => customItem.hash === trigger.customItemHash);
+            if(findCustomItem) {
+              return { ...trigger, customItemIndex: findCustomItem.index, customItemName: findCustomItem.name };
+            } else {
+              return { ...trigger, customItemIndex: -1, customItemName: '랜덤' }
+            }
+          } else {
+            return trigger;
+          }
+        });
+
+        setCustomItemList(customItemList);
+        setVtpTriggerList(updateVtpTriggerList);
+        openSuccessNotification('성공적으로 목록을 불러왔습니다.');
       }
     });
   }
@@ -160,7 +186,9 @@ export default function VTPSettingInput() {
       <br />
       <Row>
         <Col flex='auto'>
-          <Input addonBefore='커스텀 아이템 폴더 경로' id='vtpCustomItemPath' name='vtpCustomItemPath' placeholder='VTP 커스텀 아이템이 저장된 경로를 입력하세요' value={vtpCustomItemPath} onChange={handleChange} />
+          <Tooltip placement='top' title={vtpCustomItemPath}>
+            <Input addonBefore='커스텀 아이템 폴더 경로' id='vtpCustomItemPath' name='vtpCustomItemPath' placeholder='VTP 커스텀 아이템이 저장된 경로를 입력하세요' value={vtpCustomItemPath} onChange={handleChange} />
+          </Tooltip>
         </Col>
         <Col>
           <Button size='middle' type='primary' htmlType='button' onClick={updateCustomItemList}>목록 불러오기</Button>

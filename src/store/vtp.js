@@ -40,7 +40,7 @@ export const selectedVtpTriggerState = atom({
   key: 'selectedVtpTriggerState',
   default: {
     triggerName: '',  // 트리거 이름
-    method: '',  // 트리거 메소드(throw, drop)
+    method: 'VTP_Throw',  // 트리거 메소드(throw, drop)
     donationAmount: 1000,  // 후원 금액
     count: 1,  // 갯수
     itemIndex: -1,
@@ -48,7 +48,9 @@ export const selectedVtpTriggerState = atom({
     customItemName: '',
     customItemHash: null,
     isCustomItem: false,
-    damage: 0
+    damage: 0,
+    useAt: true,
+    platform: ['투네이션']
   }
 });
 

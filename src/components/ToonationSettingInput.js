@@ -19,12 +19,11 @@ export default function ToonationSettingInput() {
   const [connectionLoading, setConnectionLoading] = useState(false);
 
   const [toonationKey, setToonationKey] = useRecoilState(toonationKeyState);
-  const vtpTriggerList = useRecoilValue(vtpTriggerListState);
 
   const [toonation, setToonation] = useState(null);
 
   const handleChange = (e) => {
-    setToonationKey(e.target.value );
+    setToonationKey(e.target.value);
   }
 
   const connectToonationAlert = async () => {
@@ -55,7 +54,7 @@ export default function ToonationSettingInput() {
           break;
         }
         case 'close': {
-          openFailedNotification('투네이션 연결이 끊였습니다.');
+          openInfoNotification('투네이션 연결이 해제되었습니다.');
           setConnected(false);
           break;
         }
@@ -75,24 +74,20 @@ export default function ToonationSettingInput() {
     if(onlyTxtDona) {
       const amount = content.amount;
 
-      const trigger = vtpTriggerList.find(trigger => trigger.donationAmount === amount);
+      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount);
 
-      if(trigger) {
+      if(trigger && trigger.useAt && trigger.platform.find(platform => platform === '투네이션')) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);
       }
     }
   }
 
   const disconnectToonationAlert = () => {
-    console.log('disconnectToonationAlert');
-
     setDisconnectingLoading(true);
     toonation.disconnect();
     setToonation(null);
     setConnected(false);
     setDisconnectingLoading(false);
-
-    openInfoNotification('VTP 연결이 해제되었습니다.');
   }
 
   return (

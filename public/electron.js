@@ -1,14 +1,15 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const path = require('path');
+require('@electron/remote/main').initialize();
 
 process.env.MODE='dev';
 
 app.whenReady().then(() => {
   const winOptions = {
-    width: 800,  
-    height: 600,
-    minWidth: 750,
-    minHeight: 600,
+    width: 1200,  
+    height: 650,
+    minWidth: 1200,
+    minHeight: 650,
     webPreferences: {  
       nodeIntegration: true, 
       contextIsolation : false, 
@@ -20,6 +21,8 @@ app.whenReady().then(() => {
   }
 
   const win = new BrowserWindow(winOptions);
+
+  require('@electron/remote/main').enable(win.webContents);
 
   if (process.env.MODE === 'dev') {
     win.loadURL('http://localhost:3000');

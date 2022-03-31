@@ -7,6 +7,8 @@ import { Button } from 'antd';
 import ToonationSettingInput from './components/ToonationSettingInput';
 import VTPSettingInput from './components/VTPSettingInput';
 import VTPTriggerSettingPanel from './components/VTPTriggerSettingPanel';
+import { SettingOutlined } from '@ant-design/icons';
+
 
 function App() {
   const openVTPSettingPanel = () => {
@@ -22,7 +24,7 @@ function App() {
         <br/>
         <VTPSettingInput />
         <br />
-        <Button onClick={openVTPSettingPanel}>VTP 트리거 설정</Button>
+        <Button onClick={openVTPSettingPanel} icon={<SettingOutlined />}>VTP 트리거 설정</Button>
         
         <VTPTriggerSettingPanel />
       </div>
