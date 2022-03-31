@@ -24,8 +24,8 @@ export default function VTPTriggerForm() {
     setSelectedVtpTrigger({ ...selectedVtpTrigger, donationAmount: value });
   }
 
-  const handleThrownCountChange = (value) => {
-    setSelectedVtpTrigger({ ...selectedVtpTrigger, thrownCount: value });
+  const handleCountChange = (value) => {
+    setSelectedVtpTrigger({ ...selectedVtpTrigger, count: value });
   }
 
   const handleItemIndexChange = (value) => {
@@ -96,7 +96,7 @@ const modTrigger = (trigger) => {
 
         <InputNumber name='donationAmount' addonBefore='후원 금액' min={1000} defaultValue={1000} onChange={handleDonationAmounChange} value={selectedVtpTrigger.donationAmount} />
 
-        <InputNumber name='thrownCount' addonBefore='개수' min={1} defaultValue={1} onChange={handleThrownCountChange} value={selectedVtpTrigger.thrownCount} />
+        <InputNumber name='count' addonBefore='개수' min={1} defaultValue={1} onChange={handleCountChange} value={selectedVtpTrigger.count} />
 
         <Tooltip placement="rightTop" title='커스텀 아이템 사용 여부를 선택합니다.'>
           <Switch checked={selectedVtpTrigger.isCustomItem} onChange={handleCustomItemUseChange} disabled={customItemList.length === 0 ? true : false} />

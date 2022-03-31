@@ -3,12 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { RecoilRoot } from 'recoil';
 
 ReactDOM.render(
-  <RecoilRoot>
-    <App />
-  </RecoilRoot>,
+    <App />,
   document.getElementById('root')
 );
 

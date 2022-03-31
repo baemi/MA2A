@@ -1,13 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { toonationKeyState, toonationConnectedState } from '../store/donation';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { toonationKeyState } from '../store/donation';
 
 import { Row, Col, Card, Input, Button, Tooltip } from 'antd';
 import { PoweroffOutlined, DisconnectOutlined } from '@ant-design/icons';
 import { openFailedNotification, openInfoNotification, openSuccessNotification } from '../util/noti';
 
 import * as VtpMessage from '../vtp/message';
+import { vtpTriggerListState } from '../store/vtp';
 
 const Toonation = require('../donation/toonation');
 
@@ -18,6 +19,7 @@ export default function ToonationSettingInput() {
   const [connectionLoading, setConnectionLoading] = useState(false);
 
   const [toonationKey, setToonationKey] = useRecoilState(toonationKeyState);
+  const vtpTriggerList = useRecoilValue(vtpTriggerListState);
 
   const [toonation, setToonation] = useState(null);
 
@@ -68,14 +70,12 @@ export default function ToonationSettingInput() {
 
   const handleToonationMessage = (toonationMsg) => {
     const content = toonationMsg.content;
-    const onlyTxtDona = null === content.video_info && (toonationMsg.code_ex && 300 !== toonationMsg.code_ex);
-
-    console.dir(toonationMsg);
+    const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex ;
 
     if(onlyTxtDona) {
       const amount = content.amount;
 
-      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount);
+      const trigger = vtpTriggerList.find(trigger => trigger.donationAmount === amount);
 
       if(trigger) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);
@@ -91,6 +91,8 @@ export default function ToonationSettingInput() {
     setToonation(null);
     setConnected(false);
     setDisconnectingLoading(false);
+
+    openInfoNotification('VTP 연결이 해제되었습니다.');
   }
 
   return (

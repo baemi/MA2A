@@ -39,14 +39,16 @@ export const vtpTriggerListState = atom({
 export const selectedVtpTriggerState = atom({
   key: 'selectedVtpTriggerState',
   default: {
-    triggerName: '',
-    donationAmount: 1000,
-    thrownCount: 1,
+    triggerName: '',  // 트리거 이름
+    method: '',  // 트리거 메소드(throw, drop)
+    donationAmount: 1000,  // 후원 금액
+    count: 1,  // 갯수
     itemIndex: -1,
     customItemIndex: -1,
-    damage: 0,
+    customItemName: '',
+    customItemHash: null,
     isCustomItem: false,
-    customItemName: ''
+    damage: 0
   }
 });
 
