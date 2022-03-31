@@ -76,7 +76,10 @@ export default function ToonationSettingInput() {
     console.log('toonation:', toonationMsg);
 
     const content = toonationMsg.content;
-    const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex ;
+    const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex && !content.roulette;
+
+    console.log(onlyTxtDona);
+    console.log(content);
 
     if(onlyTxtDona) {
       const amount = content.amount;
