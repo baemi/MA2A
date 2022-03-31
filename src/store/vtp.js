@@ -45,7 +45,8 @@ export const selectedVtpTriggerState = atom({
     itemIndex: -1,
     customItemIndex: -1,
     damage: 0,
-    isCustomItem: false
+    isCustomItem: false,
+    customItemName: ''
   }
 });
 

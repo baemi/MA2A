@@ -1,9 +1,9 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { vtpIpState, vtpPortState, vtpSocketState, vtpCustomItemPathState, vtpCustomItemListState } from '../store/vtp';
 
-import { Row, Col, Card, Input, Button, Space } from 'antd';
+import { Row, Col, Card, Input, Button } from 'antd';
 import { openFailedNotification, openInfoNotification, openSuccessNotification } from '../util/noti';
 
 export default function VTPSettingInput() {
@@ -15,8 +15,7 @@ export default function VTPSettingInput() {
   const setVtpSocket = useSetRecoilState(vtpSocketState);
   const [vtpCustomItemPath, setVtpCustomItemPath] = useRecoilState(vtpCustomItemPathState);
 
-  const [customItemList, setCustomItemList] = useRecoilState(vtpCustomItemListState);
-
+  const setCustomItemList = useSetRecoilState(vtpCustomItemListState);
 
   const handleChange = (e) => {
     // eslint-disable-next-line default-case
@@ -53,13 +52,9 @@ export default function VTPSettingInput() {
     const vtpUrl = `ws://${vtpIp === '127.0.0.1' ? 'localhost' : vtpIp }:${vtpPort}/vtplus`;
 
     if('WebSocket' in window) {
-      setConnectionLoading(true);
+      const socket = new WebSocket(vtpUrl);
 
-      const vtpSocket = new WebSocket(vtpUrl);
-
-      vtpSocket.onopen = (e) => {
-        setVtpSocket(vtpSocket);
-        window.vtpSocket = vtpSocket;
+      socket.onopen = (e) => {
 
         setConnected(true);
         setConnectionLoading(false);
@@ -67,9 +62,13 @@ export default function VTPSettingInput() {
         openSuccessNotification('성공적으로 연결되었습니다.');
       }
 
-      vtpSocket.onclose = (e) => {
+      socket.onclose = (e) => {
         openInfoNotification('VTP 연결 해제');
       }
+
+      setVtpSocket(socket);
+
+      setConnectionLoading(true);
     } else {
       openFailedNotification('현재 VTP와 연결을 지원하지 않습니다.(code: 101)');
       setConnectionLoading(false);

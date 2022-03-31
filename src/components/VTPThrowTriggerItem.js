@@ -9,18 +9,14 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 export default function VTPThrowTriggerItem({ item, handleCustomItemUseChange }) {
 
   const [vtpTriggerList, setVtpTriggerList] = useRecoilState(vtpTriggerListState);
-  const [selectedVtpTrigger, setSelectedVtpTrigger] = useRecoilState(selectedVtpTriggerState);
+  const setSelectedVtpTrigger = useSetRecoilState(selectedVtpTriggerState);
   const setSelectingVtpTrigger = useSetRecoilState(selectingVtpTriggerState);
-
-
 
   const loadVTPTriggerItem = () => {
     handleCustomItemUseChange(item.isCustomItem);
 
     setSelectedVtpTrigger(item);
     setSelectingVtpTrigger(true);
-
-    console.log(item);
   }
 
   const delVTPTriggerItem = () => {

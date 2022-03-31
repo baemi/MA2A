@@ -5,7 +5,7 @@
   "description": "MA2A, MoneyAttackToAngjyu",
   "main": "public/electron.js",
   "scripts": {
-    "start": "concurrently \"npm run react:start\" \"npm run electron:start\"",
+    "start": "concurrently \"npm run react:start\" \"npm run electron:start MODE=dev\"",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
     "test": "react-scripts test",
