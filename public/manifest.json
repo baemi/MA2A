@@ -3,17 +3,12 @@
   "name": "Create React App Sample",
   "icons": [
     {
-        "src": "icon.ico",
-        "sizes": "256x256",
-        "type": "image/x-icon"
-    },
-    {
-      "src": "angjyu_logo.png",
+      "src": "angjyu_logo256.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "angjyu_logo.png",
+      "src": "angjyu_logo256.png",
       "type": "image/png",
       "sizes": "512x512"
     }

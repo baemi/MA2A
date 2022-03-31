@@ -11,7 +11,7 @@ app.whenReady().then(() => {
     minWidth: 1200,
     minHeight: 800,
     show: false,
-    // icon: path.join(__dirname, 'public/angjyu_logo256.ico'),
+    icon: path.join(__dirname, './angjyu_logo256.png'),
     webPreferences: {  
       nodeIntegration: true, 
       contextIsolation : false

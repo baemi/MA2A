@@ -1,6 +1,6 @@
 {
     "name": "MA2A",
-    "version": "0.1.0",
+    "version": "1.0.3",
     "homepage": "./",
     "description": "MA2A, MoneyAttackToAngjyu",
     "main": "public/electron.js",
