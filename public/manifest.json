@@ -1,20 +1,25 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "angjyu_logo256.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "angjyu_logo256.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+    "short_name": "React App",
+    "name": "Create React App Sample",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "64x64",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "angjyu_logo256.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "angjyu_logo256.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
 }

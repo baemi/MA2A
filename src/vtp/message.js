@@ -1,10 +1,20 @@
 // VTP 메시지 전달
 function sendTriggerMessage(socket, trigger) {
-  const itemIndex = trigger.isCustomItem ? 8 : trigger.itemIndex;
-  const customItemIndex = trigger.isCustomItem ? trigger.customItemIndex : -1;
-  const message = `${trigger.method}:${trigger.count}:${itemIndex}:${customItemIndex}:${trigger.damage}`;
+  console.log(trigger);
 
-  socket.send(message);
+  if(trigger.method === 'VTP_Throw') {
+    const itemIndex = trigger.isCustomItem ? 8 : trigger.itemIndex;
+    const customItemIndex = trigger.isCustomItem ? trigger.customItemIndex : -1;
+    const message = `VTP_Throw:${trigger.count}:${itemIndex}:${customItemIndex}:${trigger.damage}`;
+  
+    socket.send(message);
+  } else if(trigger.method === 'VTP_Drop') {
+    const itemIndex = trigger.isCustomItem ? 6 : trigger.itemIndex;
+    const customItemIndex = trigger.isCustomItem ? trigger.customItemIndex : -1;
+    const message = `VTP_Drop:${itemIndex}:${customItemIndex}:${trigger.damage}`;
+  
+    socket.send(message);
+  }
 }
 
 export {

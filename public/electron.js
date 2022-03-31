@@ -6,12 +6,12 @@ require('@electron/remote/main').initialize();
 
 app.whenReady().then(() => {
   const winOptions = {
-    width: 1200,  
+    width: 1350,  
     height: 800,
-    minWidth: 1200,
+    minWidth: 1350,
     minHeight: 800,
     show: false,
-    icon: path.join(__dirname, './angjyu_logo256.png'),
+    // icon: path.join(__dirname, 'build/icon.ico'),
     webPreferences: {  
       nodeIntegration: true, 
       contextIsolation : false

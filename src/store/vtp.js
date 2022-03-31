@@ -18,24 +18,35 @@ export const vtpSocketState = atom({
   default: null
 })
 
+// 커스텀 아이템 경로(상위 경로)
 export const vtpCustomItemPathState = atom({
   key: 'vtpCustomItemPathState',
   default: null,
   effects: [localStorageEffect('vtpCustomItemPathState')]
 });
 
-export const vtpCustomItemListState = atom({
-  key: 'vtpCustomItemListState',
-  default: window.localStorage.vtpCustomItemListState ? window.localStorage.vtpCustomItemListState : [],
-  effects: [localStorageEffect('vtpCustomItemListState')]
+// Throw 커스텀 아이템 리스트 상태
+export const vtpCustomThrowItemListState = atom({
+  key: 'vtpCustomThrowItemListState',
+  default: window.localStorage.vtpCustomThrowItemListState ? window.localStorage.vtpCustomThrowItemListState : [],
+  effects: [localStorageEffect('vtpCustomThrowItemListState')]
 });
 
+// Drop 커스텀 아이템 리스트 상태
+export const vtpCustomDropItemListState = atom({
+  key: 'vtpCustomDropItemListState',
+  default: window.localStorage.vtpCustomDropItemListState ? window.localStorage.vtpCustomDropItemListState : [],
+  effects: [localStorageEffect('vtpCustomDropItemListState')]
+})
+
+// 트리거 리스트 상태
 export const vtpTriggerListState = atom({
   key: 'vtpTriggerListState',
   default: window.localStorage.vtpTriggerListState ? window.localStorage.vtpTriggerListState : [],
   effects: [localStorageEffect('vtpTriggerListState')]
 });
 
+// 선택된 트리거 상태
 export const selectedVtpTriggerState = atom({
   key: 'selectedVtpTriggerState',
   default: {

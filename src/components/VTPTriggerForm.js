@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { vtpSocketState, vtpCustomItemListState, vtpTriggerListState, selectedVtpTriggerState, selectingVtpTriggerState } from '../store/vtp';
+import { vtpSocketState, vtpCustomThrowItemListState, vtpTriggerListState, selectedVtpTriggerState, selectingVtpTriggerState, vtpCustomDropItemListState } from '../store/vtp';
 
 import * as VtpMessage from '../vtp/message';
 
@@ -9,7 +9,9 @@ import { Button, Card, Input, InputNumber, Select, Space, Switch, Tooltip, Row, 
 const { Option } = Select;
 
 export default function VTPTriggerForm() {
-  const customItemList = useRecoilValue(vtpCustomItemListState);  // 커스텀 아이템 목록
+  const customThrowItemList = useRecoilValue(vtpCustomThrowItemListState);  // 커스텀 아이템(Throw) 목록
+  const customDropItemList = useRecoilValue(vtpCustomDropItemListState);  // 커스텀 아이템(Drop) 목록
+
   const [selectedVtpTrigger, setSelectedVtpTrigger] = useRecoilState(selectedVtpTriggerState);
   const [vtpTriggerList, setVtpTriggerList] = useRecoilState(vtpTriggerListState);
   const [selectingVtpTrigger, setSelectingVtpTrigger] = useRecoilState(selectingVtpTriggerState);
@@ -46,9 +48,9 @@ export default function VTPTriggerForm() {
 
   const handleMethodChange = (value) => {
     if('VTP_Drop' === value) {
-      setSelectedVtpTrigger({ ...selectedVtpTrigger, method: value, isCustomItem: false });
+      setSelectedVtpTrigger({ ...selectedVtpTrigger, method: value, count: 1, customItemName: '랜덤', customItemIndex: -1, customItemHash: undefined, isCustomItem: false });
     } else {
-      setSelectedVtpTrigger({ ...selectedVtpTrigger, method: value });
+      setSelectedVtpTrigger({ ...selectedVtpTrigger, method: value, customItemName: '랜덤', customItemIndex: -1, customItemHash: undefined, isCustomItem: false });
     }
   }
 
@@ -153,7 +155,7 @@ const modTrigger = (trigger) => {
           </Select>
         </div>
 
-        <InputNumber name='count' addonBefore='개수' min={1} defaultValue={1} onChange={handleCountChange} value={selectedVtpTrigger.count} />
+        <InputNumber disabled={selectedVtpTrigger.method === 'VTP_Drop'} name='count' addonBefore='개수' min={1} defaultValue={1} onChange={handleCountChange} value={selectedVtpTrigger.count} />
 
         <Row align='middle'>
           <Col style={{ paddingRight: '8px' }}>
@@ -161,7 +163,7 @@ const modTrigger = (trigger) => {
           </Col>
           <Col>
             <Tooltip placement="rightTop" title='커스텀 아이템 사용 여부를 선택합니다.'>
-              <Switch checkedChildren="Y" unCheckedChildren="N" checked={selectedVtpTrigger.isCustomItem} onChange={handleCustomItemUseChange} disabled={customItemList.length === 0 || selectedVtpTrigger.method === 'VTP_Drop' ? true : false} />
+              <Switch checkedChildren="Y" unCheckedChildren="N" checked={selectedVtpTrigger.isCustomItem} onChange={handleCustomItemUseChange} disabled={customThrowItemList.length === 0 || customDropItemList.length === 0 ? true : false} />
             </Tooltip>
           </Col>
         </Row>
@@ -173,7 +175,7 @@ const modTrigger = (trigger) => {
                 <Select name='customItemIndex' value={`${selectedVtpTrigger.customItemIndex}`} style={{ width: 200 }} onChange={handleCustomItemIndexChange}>
                   <Option value="-1" key='random'>랜덤</Option>
                   {
-                    customItemList.map((customItem) => {
+                    customThrowItemList.map((customItem) => {
                       return (
                         <Option value={`${customItem.index}`} key={customItem.hash}>{customItem.name}</Option>
                       )
@@ -193,16 +195,31 @@ const modTrigger = (trigger) => {
                   <Option value="5">장난감 뼈</Option>
                 </Select>
               </div>
-          : <div className="ant-input-number-wrapper ant-input-number-group">
-              <div className="ant-input-number-group-addon">아이템</div>
-              <Select name='itemIndex' value={`${selectedVtpTrigger.itemIndex}`} style={{ width: 200 }} onChange={handleItemIndexChange}>
-                <Option value="-1">랜덤</Option>
-                <Option value="0">박스</Option>
-                <Option value="1">파이</Option>
-                <Option value="2">솜브레로</Option>
-                <Option value="3">모루</Option>
-              </Select>
-            </div>
+          : selectedVtpTrigger.isCustomItem
+            ? <div className="ant-input-number-wrapper ant-input-number-group">
+                <div className="ant-input-number-group-addon">커스텀 아이템</div>
+                <Select name='customItemIndex' value={`${selectedVtpTrigger.customItemIndex}`} style={{ width: 200 }} onChange={handleCustomItemIndexChange}>
+                  <Option value="-1" key='random'>랜덤</Option>
+                  {
+                    customDropItemList.map((customItem) => {
+                      return (
+                        <Option value={`${customItem.index}`} key={customItem.hash}>{customItem.name}</Option>
+                      )
+                    })
+                  }
+                </Select>
+              </div>
+            : <div className="ant-input-number-wrapper ant-input-number-group">
+                <div className="ant-input-number-group-addon">아이템</div>
+                <Select name='itemIndex' value={`${selectedVtpTrigger.itemIndex}`} style={{ width: 200 }} onChange={handleItemIndexChange}>
+                  <Option value="-1">랜덤</Option>
+                  <Option value="0">박스</Option>
+                  <Option value="1">파이</Option>
+                  <Option value="2">솜브레로</Option>
+                  <Option value="3">모루</Option>
+                </Select>
+              </div>
+          
           
         }
         <InputNumber name='damage' addonBefore='데미지' min={0} max={100} defaultValue={0} onChange={handleDamageChange} value={selectedVtpTrigger.damage} />
