@@ -34,35 +34,45 @@ export default function TwipSettingInput() {
 
     // 투네이션 알림 연동
     const twip = new Twip(twipKey);
-    await twip.connect((eventName, data) => {
-      switch(eventName) {
-        case 'connect': {
-          if(data) {
-            setTwip(twip);
-            openSuccessNotification('성공적으로 연결되었습니다.');
-          } else {
-            openFailedNotification('연결에 실패하였습니다.');
-          }
-    
-          setConnected(data);
-          break;
-        }
-        case 'message': {
-          handleTwipMessage(data);
-          break;
-        }
-        case 'close': {
-          openInfoNotification('트윕 연결이 해제되었습니다.');
-          setConnected(false);
-          break;
-        }
-        default: {
-          // none
-        }
-      }
+    await twip.loadToken();
+    await twip.connect(handleTwip);
+  }
 
-      setConnectionLoading(false);
-    });
+  const handleTwip = (eventName, data, self) => {
+    switch(eventName) {
+      case 'connect': {
+        if(data) {
+          setTwip(self);
+          openSuccessNotification('성공적으로 연결되었습니다.');
+        } else {
+          openFailedNotification('연결에 실패하였습니다.');
+        }
+  
+        setConnected(data);
+        break;
+      }
+      case 'message': {
+        handleTwipMessage(data);
+        break;
+      }
+      case 'close': {
+        openInfoNotification('트윕 연결이 해제되었습니다.');
+        setConnected(false);
+
+        const manualDisconnect = data;
+        if(!manualDisconnect) {
+          console.log('트윕을 재연결합니다.');
+          // 재연결 수행
+          self.connect(handleTwip);
+        }
+        break;
+      }
+      default: {
+        // none
+      }
+    }
+
+    setConnectionLoading(false);
   }
 
   const handleTwipMessage = (twipMsg) => {
@@ -83,7 +93,7 @@ export default function TwipSettingInput() {
 
   const disconnectTwipAlert = () => {
     setDisconnectingLoading(true);
-    twip.disconnect();
+    twip.disconnect(true);
     setTwip(null);
     setConnected(false);
     setDisconnectingLoading(false);

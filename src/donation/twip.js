@@ -17,6 +17,9 @@ export class Twip {
     this.wsClient = null;
     this.wsConnection = null;
     this.connected = false;
+
+    // etc
+    this.pingLoopHandle = null;
   }
 
   async loadToken() {
@@ -56,14 +59,12 @@ export class Twip {
   async connect(cb) {
     if (!cb) cb = () => { };
 
-    await this.loadToken();
-
     if (!this.token) {
       console.log('not found twip token');
       return false;
     }
 
-    this.disconnect();
+    this.disconnect(false);
     const client = new WebSocketClient();
 
     client.on('connectFailed', (e) => {
@@ -77,9 +78,13 @@ export class Twip {
 
       cb('connect', this.connected, this);
 
-      setInterval(function () {
-        connection.send("2");
-      }, 22000);
+      // this.pingLoopHandle = setInterval(function () {
+      //   connection.send("2");
+      // }, 22000);
+
+      this.pingLoopHandle = setInterval(() => {
+        this.ping();
+      }, 20000);
 
       connection.on('error', (error) => {
         this.connected = false;
@@ -87,12 +92,12 @@ export class Twip {
       });
 
       connection.on('close', () => {
-        console.log(`Twip connection closed. Try to reconnect after 10 seconds`);
+        console.log(`Twip connection closed. ${new Date()}`);
         this.connected = false;
 
-        cb('close');
+        this.clearConnection();
 
-        this.disconnect();
+        cb('close', this.manualDisconnect, this);
       });
 
       connection.on('message', (message) => {
@@ -148,10 +153,16 @@ export class Twip {
     client.connect(twipWsUrl);
   }
 
-  disconnect() {
+  disconnect(manual) {
+    this.manualDisconnect = manual;
+
+    clearInterval(this.pingLoopHandle);
     if (this.wsConnection) {
       this.wsConnection.close();
     }
+  }
+
+  clearConnection() {
     this.wsConnection = null;
     this.wsClient = null;
   }
@@ -162,7 +173,7 @@ export class Twip {
       return false;
     }
 
-    this.wsConnection.ping("#ping");
+    this.wsConnection.ping('2');
   }
 
   isConnected() {

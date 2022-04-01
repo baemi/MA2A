@@ -36,35 +36,9 @@ export default function ToonationSettingInput() {
     // 투네이션 알림 연동
     try {
       const toonation = new Toonation(toonationKey);
-      await toonation.connect((eventName, data) => {
-        switch(eventName) {
-          case 'connect': {
-            if(data) {
-              setToonation(toonation);
-              openSuccessNotification('성공적으로 연결되었습니다.');
-            } else {
-              openFailedNotification('연결에 실패하였습니다.');
-            }
-      
-            setConnected(data);
-            break;
-          }
-          case 'message': {
-            handleToonationMessage(data);
-            break;
-          }
-          case 'close': {
-            openInfoNotification('투네이션 연결이 해제되었습니다.');
-            setConnected(false);
-            break;
-          }
-          default: {
-            // none
-          }
-        }
+      await toonation.loadPayload();
 
-        setConnectionLoading(false);
-      });
+      await toonation.connect(handleToonation);
     } catch (e) {
       setConnectionLoading(false);
       console.error(e);
@@ -72,14 +46,48 @@ export default function ToonationSettingInput() {
     
   }
 
+  const handleToonation = (eventName, data, self) => {
+    switch(eventName) {
+      case 'connect': {
+        if(data) {
+          setToonation(self);
+          openSuccessNotification('성공적으로 연결되었습니다.');
+        } else {
+          openFailedNotification('연결에 실패하였습니다.');
+        }
+  
+        setConnected(data);
+        break;
+      }
+      case 'message': {
+        handleToonationMessage(data);
+        break;
+      }
+      case 'close': {
+        openInfoNotification('투네이션 연결이 해제되었습니다.');
+        setConnected(false);
+
+        const manualDisconnect = data;
+        if(!manualDisconnect) {
+          console.log('투네이션을 재연결합니다.');
+          // 재연결 수행
+          self.connect(handleToonation);
+        }
+        break;
+      }
+      default: {
+        // none
+      }
+    }
+
+    setConnectionLoading(false);
+  }
+
   const handleToonationMessage = (toonationMsg) => {
     console.log('toonation:', toonationMsg);
 
     const content = toonationMsg.content;
     const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex && !content.roulette;
-
-    console.log(onlyTxtDona);
-    console.log(content);
 
     if(onlyTxtDona) {
       const amount = content.amount;
@@ -94,7 +102,7 @@ export default function ToonationSettingInput() {
 
   const disconnectToonationAlert = () => {
     setDisconnectingLoading(true);
-    toonation.disconnect();
+    toonation.disconnect(true);
     setToonation(null);
     setConnected(false);
     setDisconnectingLoading(false);

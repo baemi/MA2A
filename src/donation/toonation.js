@@ -49,14 +49,12 @@ export class Toonation {
   async connect(cb) {
     if(!cb) cb = () => {};
 
-    await this.loadPayload();
-
     if(!this.payload) {
       console.log('not found toonation payload');
       return false;
     }
 
-    this.disconnect();
+    this.disconnect(false);
     const client = new WebSocketClient();
 
     client.on('connectFailed', (e) => {
@@ -72,7 +70,7 @@ export class Toonation {
       cb('connect', this.connected, this);
 
       // Send pings every 12000ms when websocket is connected
-      this.pingLoopHandle = setInterval(() => { this.ping() }, 12000);
+      this.pingLoopHandle = setInterval(() => { this.ping() }, 11000);
 
       connection.on('error', (error) => {
         this.connected = false;
@@ -80,12 +78,12 @@ export class Toonation {
       });
 
       connection.on('close', () => {
-        console.log(`Toonation connection closed. Try to reconnect after 10 seconds`);
+        console.log(`Toonation connection closed. ${new Date()}`);
         this.connected = false;
 
-        cb('close');
+        this.clearConnection();
 
-        this.disconnect();
+        cb('close', this.manualDisconnect, this);
       });
 
       connection.on('message', (message) => {
@@ -107,11 +105,16 @@ export class Toonation {
     client.connect("wss://toon.at:8071/" + this.payload);
   }
 
-  disconnect() {
+  disconnect(manual) {
+    this.manualDisconnect = manual;
+
     clearInterval(this.pingLoopHandle);
     if(this.wsConnection) {
       this.wsConnection.close();
     }
+  }
+
+  clearConnection() {
     this.wsConnection = null;
     this.wsClient = null;
   }
