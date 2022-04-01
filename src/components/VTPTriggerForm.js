@@ -159,7 +159,7 @@ const modTrigger = (trigger) => {
 
         <Row align='middle'>
           <Col style={{ paddingRight: '8px' }}>
-            커스템 아이템 사용
+            커스텀 아이템 사용
           </Col>
           <Col>
             <Tooltip placement="rightTop" title='커스텀 아이템 사용 여부를 선택합니다.'>
