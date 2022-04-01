@@ -16,7 +16,7 @@
 
 다운로드 한 후 MA2A.exe를 실행해주시길 바랍니다.
 
-[MA2A 다운로드](https://drive.google.com/file/d/1nJyTZfdbdxwLDrRjG6lk-Ugo4OHDNQPt/view?usp=sharing)
+[MA2A 다운로드](https://github.com/baemi/MA2A/releases)
 
 ## 사용법
 
