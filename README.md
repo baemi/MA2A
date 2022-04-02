@@ -10,7 +10,7 @@
 - Vtuber Plus 연결
 - 후원 금액에 따라 Vtuber Plus 던지기(VTP_Throw), 떨구기(VTP_Drop) 동작 관리
 
-> Vtuber Plus 3.5.2 까지 지원
+> Vtuber Plus 3.5.4 까지 지원
 
 ## 다운로드 및 실행
 
