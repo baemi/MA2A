@@ -78,13 +78,9 @@ export class Twip {
 
       cb('connect', this.connected, this);
 
-      // this.pingLoopHandle = setInterval(function () {
-      //   connection.send("2");
-      // }, 22000);
-
-      this.pingLoopHandle = setInterval(() => {
-        this.ping();
-      }, 20000);
+      this.pingLoopHandle = setInterval(function(){
+        connection.send("2");
+      }, 22000);
 
       connection.on('error', (error) => {
         this.connected = false;
@@ -101,6 +97,8 @@ export class Twip {
       });
 
       connection.on('message', (message) => {
+        console.log('message:', message);
+
         try {
           if (message.type === 'utf8') {
             let body = message.utf8Data;
@@ -112,6 +110,9 @@ export class Twip {
               eventName = data[0];
               details = data[1];
             }
+
+            console.log(data);
+            
 
             switch (eventName) {
               case "new donate":
@@ -168,10 +169,13 @@ export class Twip {
   }
 
   // 트윕 알림 연결 유지를 위한 Ping 전송
+  // 2022-04-03, 연결 유지가 정상적으로 되지 않아, 사용 중지
   ping() {
     if (!this.isConnected() || !this.wsConnection) {
       return false;
     }
+
+    console.log('ping');
 
     this.wsConnection.ping('2');
   }
