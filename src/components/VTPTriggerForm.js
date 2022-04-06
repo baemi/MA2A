@@ -163,7 +163,7 @@ const modTrigger = (trigger) => {
           </Col>
           <Col>
             <Tooltip placement="rightTop" title='커스텀 아이템 사용 여부를 선택합니다.'>
-              <Switch checkedChildren="Y" unCheckedChildren="N" checked={selectedVtpTrigger.isCustomItem} onChange={handleCustomItemUseChange} disabled={customThrowItemList.length === 0 || customDropItemList.length === 0 ? true : false} />
+              <Switch checkedChildren="Y" unCheckedChildren="N" checked={selectedVtpTrigger.isCustomItem} onChange={handleCustomItemUseChange} disabled={(selectedVtpTrigger.method === 'VTP_Throw' && customThrowItemList.length === 0) || (selectedVtpTrigger.method === 'VTP_Drop' && customDropItemList.length === 0) ? true : false} />
             </Tooltip>
           </Col>
         </Row>
@@ -229,7 +229,7 @@ const modTrigger = (trigger) => {
             사용 여부
           </Col>
           <Col>
-            <Tooltip placement="rightTop" title='커스텀 아이템 사용 여부를 선택합니다.'>
+            <Tooltip placement="rightTop" title='트리거 사용 여부를 선택합니다.'>
               <Switch checkedChildren="Y" unCheckedChildren="N" checked={selectedVtpTrigger.useAt} onChange={handleCustomItemUseAtChange} />
             </Tooltip>
           </Col>
