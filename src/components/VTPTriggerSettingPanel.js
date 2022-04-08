@@ -74,7 +74,7 @@ export default function VTPTriggerSettingPanel() {
     console.log(remote);
 
     const options = {
-      title: 'VTP 트리거 목록',
+      title: 'Vtuber Plus 트리거 목록',
       defaultPath: electronPath.join(remote.app.getPath('documents'), 'vtp_trigger_list.ma2atl'),
       filters: [
         { name: 'MA2A Trigger List', extensions: ['ma2atl'] },
@@ -100,12 +100,12 @@ export default function VTPTriggerSettingPanel() {
 
   return (
     <Card
-      title='VTP 트리거 설정'
+      title='Vtuber Plus 트리거 설정'
       extra={
         <>
           <Space>
-            <Button onClick={importVtpTriggerList}>VTP 트리거 가져오기<UploadOutlined /></Button>
-            <Button onClick={exportVtpTriggerList}>VTP 트리거 내보내기<DownloadOutlined /></Button>
+            <Button onClick={importVtpTriggerList}>Vtuber Plus 트리거 가져오기<UploadOutlined /></Button>
+            <Button onClick={exportVtpTriggerList}>Vtuber Plus 트리거 내보내기<DownloadOutlined /></Button>
             <Button shape="circle" onClick={closeVTPSettingPanel}><CloseOutlined /></Button>
           </Space>
         </>

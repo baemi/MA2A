@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { vtpIpState, vtpPortState, vtpSocketState, vtpCustomItemPathState, vtpCustomThrowItemListState, vtpTriggerListState, vtpCustomDropItemListState } from '../store/vtp';
 
 import { Row, Col, Card, Input, Button, Tooltip } from 'antd';
-import { PoweroffOutlined, DisconnectOutlined } from '@ant-design/icons';
+import { PoweroffOutlined, DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { openFailedNotification, openInfoNotification, openSuccessNotification } from '../util/noti';
 
 export default function VTPSettingInput() {
@@ -195,7 +195,18 @@ export default function VTPSettingInput() {
   }
 
   return (
-    <Card title='VTP Websocket Server 설정' bordered={false} style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}>
+    <Card
+      title='Vtuber Plus Websocket Server 설정'
+      bordered={true}
+      extra={
+        <>
+          <Tooltip placement='bottomRight' title='Vtuber Plus > 로그인 > Settings > General > Websocket Server에 입력된 IP와 PORT를 입력합니다.'>
+            <QuestionCircleOutlined size='large' />
+          </Tooltip>
+        </>
+      }
+      // style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}
+    >
       <Row align='middle'>
         <Col flex="auto" style={{ padding: '4px' }}>
           <Input addonBefore='IP' id='vtpIp' name='vtpIp' placeholder='VTP Websocket Server IP' value={vtpIp} onChange={handleChange} />
