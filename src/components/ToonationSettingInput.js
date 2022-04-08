@@ -36,7 +36,11 @@ export default function ToonationSettingInput() {
     // 투네이션 알림 연동
     try {
       const toonation = new Toonation(toonationKey);
-      await toonation.loadPayload();
+      const successLoad = await toonation.loadPayload();
+      if(!successLoad) {
+        setConnectionLoading(false);
+        openFailedNotification('연결에 실패하였습니다.');
+      }
 
       await toonation.connect(handleToonation);
     } catch (e) {
@@ -73,6 +77,11 @@ export default function ToonationSettingInput() {
           // 재연결 수행
           self.connect(handleToonation);
         }
+        break;
+      }
+      case 'connect-failed': {
+        setConnectionLoading(false);
+        openFailedNotification('연결에 실패하였습니다.');
         break;
       }
       default: {

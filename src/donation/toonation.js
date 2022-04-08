@@ -58,7 +58,9 @@ export class Toonation {
     const client = new WebSocketClient();
 
     client.on('connectFailed', (e) => {
+      this.connected = false;
       console.error('ERROR:', `failed to connect toonation websocket(${e.toString()})`);
+      cb('connect-failed', undefined, this);
     });
 
     client.on('connect', (connection) => {
@@ -75,6 +77,7 @@ export class Toonation {
       connection.on('error', (error) => {
         this.connected = false;
         console.error('Error:', `Toonation Connection(${error.toString()})`);
+        cb('error', undefined, this);
       });
 
       connection.on('close', () => {
@@ -87,11 +90,13 @@ export class Toonation {
       });
 
       connection.on('message', (message) => {
+        console.log(message);
+
         try {
           if (message.type === 'utf8') {
             const data = JSON.parse(message.utf8Data);
             // data.code === 101(후원)
-            if (data.content && data.code && 101 === data.code) {
+            if (data.content && data.code && 101 === data.code) {  // 미니후원(code: 111 | 112)
               cb('message', data, this);
             }
           }
