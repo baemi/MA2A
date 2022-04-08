@@ -9,6 +9,7 @@ import { openFailedNotification, openInfoNotification, openSuccessNotification }
 
 import * as VtpMessage from '../vtp/message';
 import { Toonation } from '../donation/toonation';
+import { ToonationMini } from '../donation/toonationMini';
 
 export default function ToonationSettingInput() {
   const [connected, setConnected] = useState(false);
@@ -18,6 +19,11 @@ export default function ToonationSettingInput() {
   const [toonationKey, setToonationKey] = useRecoilState(toonationKeyState);
 
   const [toonation, setToonation] = useState(null);
+  const [toonationMini, setToonationMini] = useState(null);
+
+  const [connectedMini, setConnectedMini] = useState(false);
+  const [disconnectingLoadingMini, setDisconnectingLoadingMini] = useState(false);
+  const [connectionLoadingMini, setConnectionLoadingMini] = useState(false);
 
   // const Toonation = window.require('../donation/toonation');
 
@@ -48,7 +54,31 @@ export default function ToonationSettingInput() {
       setConnectionLoading(false);
       console.error(e);
     }
+  }
+
+  const connectToonationMiniAlert = async () => {
+    if(!toonationKey) {
+      openInfoNotification('투네이션 키를 입력해주세요.');
+      return;
+    }
+
+    setConnectionLoadingMini(true);
     
+    // 투네이션 미니 후원 알림 연동
+    try {
+      const toonationMini = new ToonationMini(toonationKey);
+      const successLoad = await toonationMini.loadPayload();
+      if(!successLoad) {
+        setConnectionLoadingMini(false);
+        openFailedNotification('연결에 실패하였습니다.');
+        return;
+      }
+
+      await toonationMini.connect(handleToonationMini);
+    } catch (e) {
+      setConnectionLoadingMini(false);
+      console.error(e);
+    }
   }
 
   const handleToonation = (eventName, data, self) => {
@@ -91,6 +121,48 @@ export default function ToonationSettingInput() {
     }
 
     setConnectionLoading(false);
+  }
+
+  const handleToonationMini = (eventName, data, self) => {
+    switch(eventName) {
+      case 'connect': {
+        if(data) {
+          setToonationMini(self);
+          openSuccessNotification('성공적으로 연결되었습니다.');
+        } else {
+          openFailedNotification('연결에 실패하였습니다.');
+        }
+  
+        setConnectedMini(data);
+        break;
+      }
+      case 'message': {
+        handleToonationMessage(data);
+        break;
+      }
+      case 'close': {
+        openInfoNotification('투네이션 연결이 해제되었습니다.');
+        setConnectedMini(false);
+
+        const manualDisconnect = data;
+        if(!manualDisconnect) {
+          console.log('투네이션을 재연결합니다.');
+          // 재연결 수행
+          self.connect(handleToonation);
+        }
+        break;
+      }
+      case 'connect-failed': {
+        setConnectionLoadingMini(false);
+        openFailedNotification('연결에 실패하였습니다.');
+        break;
+      }
+      default: {
+        // none
+      }
+    }
+
+    setConnectionLoadingMini(false);
   }
 
   const handleToonationMessage = (toonationMsg) => {
@@ -141,6 +213,14 @@ export default function ToonationSettingInput() {
     setDisconnectingLoading(false);
   }
 
+  const disconnectToonationMiniAlert = () => {
+    setDisconnectingLoadingMini(true);
+    toonationMini.disconnect(true);
+    setToonationMini(null);
+    setConnectedMini(false);
+    setDisconnectingLoadingMini(false);
+  }
+
   return (
     <Card title='Toonation Alert 설정' bordered={false} style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}>
       <Row align='middle'>
@@ -175,6 +255,38 @@ export default function ToonationSettingInput() {
         </Col>
       </Row>
       <div style={{ fontSize: '12px', color: `${connected ? '#1890ff' : '#f5222d'}`, marginTop: '4px', marginLeft: '4px' }}>{connected ? '연결 중' : '연결 끊김'}</div>
+      <Row align='middle'>
+        <Col flex="auto" style={{ padding: '4px'}}>
+          <Input.Password addonBefore='https://toon.at/widget/mini_donation/' id='toonationMiniKey' name='toonationMiniKey' autoComplete='off' style={{ height: 'inherited' }} value={toonationKey} disabled={true} />
+        </Col>
+        <Col flex='24px' style={{ padding: '4px'}}>
+          <Tooltip placement='top' title='연결'>
+            <Button 
+              disabled={connectedMini}
+              size='middle'
+              htmlType='button'
+              shape='circle'
+              loading={connectionLoadingMini}
+              onClick={connectToonationMiniAlert}
+              icon={<PoweroffOutlined style={{ fontSize: '20px', color: `${connectedMini ? '#bfbfbf' : '#1890ff'}` }} />} 
+            />
+          </Tooltip>
+        </Col>
+        <Col>
+          <Tooltip placement='top' title='연결 끊기'>
+            <Button
+              disabled={!connectedMini}
+              size='middle'
+              htmlType='button'
+              shape='circle'
+              loading={disconnectingLoadingMini}
+              onClick={disconnectToonationMiniAlert}
+              icon={<DisconnectOutlined style={{ fontSize: '20px', color: `${!connectedMini ? '#bfbfbf' : '#f5222d'}`}} />}
+              />
+          </Tooltip>
+        </Col>
+      </Row>
+      <div style={{ fontSize: '12px', color: `${connectedMini ? '#1890ff' : '#f5222d'}`, marginTop: '4px', marginLeft: '4px' }}>{connectedMini ? '연결 중' : '연결 끊김'}</div>
     </Card>
   )
 }

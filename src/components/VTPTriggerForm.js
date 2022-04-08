@@ -148,7 +148,7 @@ const modTrigger = (trigger) => {
       <Space direction="vertical">
         <Input name='triggerName' addonBefore='트리거 이름' placeholder='40자 내 이름을 입력해주세요.' maxLength={40} onChange={handleTriggerName} value={selectedVtpTrigger.triggerName} />
 
-        <InputNumber name='donationAmount' addonBefore='후원 금액' min={1000} defaultValue={1000} onChange={handleDonationAmounChange} value={selectedVtpTrigger.donationAmount} />
+        <InputNumber name='donationAmount' addonBefore='후원 금액' min={100} defaultValue={1000} onChange={handleDonationAmounChange} value={selectedVtpTrigger.donationAmount} />
 
         <Radio.Group value={selectedVtpTrigger.donationContentCond} onChange={handleDonationContentCondChange}>
           <Radio value='none'>사용 안함</Radio>
