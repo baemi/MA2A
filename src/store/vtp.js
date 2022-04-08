@@ -62,7 +62,9 @@ export const selectedVtpTriggerState = atom({
     isCustomItem: false,
     damage: 0,
     useAt: true,
-    platform: ['투네이션']
+    platform: ['투네이션'],
+    donationContentCond: 'none',
+    donationContent: ''
   }
 });
 

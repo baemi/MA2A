@@ -94,17 +94,40 @@ export default function ToonationSettingInput() {
   }
 
   const handleToonationMessage = (toonationMsg) => {
-    console.log('toonation:', toonationMsg);
-
     const content = toonationMsg.content;
     const onlyTxtDona = null === content.video_info && 300 !== toonationMsg.code_ex && !content.roulette;
 
     if(onlyTxtDona) {
       const amount = content.amount;
+      const message = content.message;
 
-      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '투네이션'));
+      // 후원 금액과 플랫폼이 일치하는 트리거 목록 가져오기
+      const triggerList = window.vtpTriggerList.filter(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '투네이션' && trigger.useAt));
 
-      if(trigger && trigger.useAt) {
+      if(triggerList.length === 0) {
+        return;
+      }
+
+      // 후원 조건과 일치하는 트리거 가져오기
+      const trigger = triggerList.find(trigger => {
+        const cond = trigger.donationContentCond;
+
+        if('none' === cond) {
+          return true;
+        }
+
+        if('equal' === cond && message && trigger.donationContent === message) {
+          return true;
+        }
+
+        if('contain' === cond && message && message.includes(trigger.donationContent)) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if(trigger) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);
       }
     }

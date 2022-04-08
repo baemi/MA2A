@@ -90,8 +90,6 @@ export class Toonation {
       });
 
       connection.on('message', (message) => {
-        console.log(message);
-
         try {
           if (message.type === 'utf8') {
             const data = JSON.parse(message.utf8Data);

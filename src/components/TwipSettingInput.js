@@ -86,16 +86,35 @@ export default function TwipSettingInput() {
   }
 
   const handleTwipMessage = (twipMsg) => {
-    console.log('twip:', twipMsg);
-
     const onlyTxtDona = null === twipMsg.variation_id;
 
     if(onlyTxtDona) {
       const amount = twipMsg.amount;
+      const message = twipMsg.comment;
 
-      const trigger = window.vtpTriggerList.find(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '트윕'));
+       // 후원 금액과 플랫폼이 일치하는 트리거 목록 가져오기
+       const triggerList = window.vtpTriggerList.filter(trigger => trigger.donationAmount === amount && trigger.platform.find(platform => platform === '트윕' && trigger.useAt));
 
-      if(trigger && trigger.useAt) {
+       // 후원 조건과 일치하는 트리거 가져오기
+      const trigger = triggerList.find(trigger => {
+        const cond = trigger.donationContentCond;
+
+        if('none' === cond) {
+          return true;
+        }
+
+        if('equal' === cond && message && trigger.donationContent === message) {
+          return true;
+        }
+
+        if('contain' === cond && message && message.includes(trigger.donationContent)) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if(trigger) {
         VtpMessage.sendTriggerMessage(window.vtpSocket, trigger);
       }
     }

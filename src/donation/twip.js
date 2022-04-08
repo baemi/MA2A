@@ -103,8 +103,6 @@ export class Twip {
       });
 
       connection.on('message', (message) => {
-        console.log('message:', message);
-
         try {
           if (message.type === 'utf8') {
             let body = message.utf8Data;
@@ -116,9 +114,6 @@ export class Twip {
               eventName = data[0];
               details = data[1];
             }
-
-            console.log(data);
-            
 
             switch (eventName) {
               case "new donate":

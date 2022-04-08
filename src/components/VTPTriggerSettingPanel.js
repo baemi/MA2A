@@ -50,8 +50,16 @@ export default function VTPTriggerSettingPanel() {
       if(!filepath.canceled) {
         const fileBuffer = electronFs.readFileSync(filepath.filePaths[0]);
         const uploadedVtpTriggerList = JSON.parse(fileBuffer);
+
+        const validTriggerList = uploadedVtpTriggerList.map(trigger => {
+          if(!trigger.donationContentCond) {
+            trigger.donationContentCond = 'none';
+            trigger.donationContent = '';
+          }
+          return trigger;
+        });
   
-        setVtpTriggerList(uploadedVtpTriggerList);
+        setVtpTriggerList(validTriggerList);
 
         openSuccessNotification('가져오기 성공');
       }  

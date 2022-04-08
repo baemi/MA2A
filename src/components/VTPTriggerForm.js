@@ -5,7 +5,7 @@ import { vtpSocketState, vtpCustomThrowItemListState, vtpTriggerListState, selec
 import * as VtpMessage from '../vtp/message';
 
 import { openInfoNotification } from "../util/noti";
-import { Button, Card, Input, InputNumber, Select, Space, Switch, Tooltip, Row, Col, Checkbox } from 'antd';
+import { Button, Card, Input, InputNumber, Select, Space, Switch, Tooltip, Row, Col, Checkbox, Radio } from 'antd';
 const { Option } = Select;
 
 export default function VTPTriggerForm() {
@@ -84,6 +84,19 @@ export default function VTPTriggerForm() {
   const handleCustomItemUseAtChange = (value) => {
     setSelectedVtpTrigger({ ...selectedVtpTrigger, useAt: value });
   }
+
+  const handleDonationContentCondChange = (e) => {
+    const donationContentCond = e.target.value;
+    if('none' === donationContentCond) {
+      setSelectedVtpTrigger({ ...selectedVtpTrigger, donationContentCond: e.target.value, donationContent: '' });
+    } else {
+      setSelectedVtpTrigger({ ...selectedVtpTrigger, donationContentCond: e.target.value });
+    }
+  }
+
+  const handleDonationContentChange = (e) => {
+    setSelectedVtpTrigger({ ...selectedVtpTrigger, donationContent: e.target.value });
+  }
   /* **** **** */
 
   /**
@@ -136,6 +149,17 @@ const modTrigger = (trigger) => {
         <Input name='triggerName' addonBefore='트리거 이름' placeholder='40자 내 이름을 입력해주세요.' maxLength={40} onChange={handleTriggerName} value={selectedVtpTrigger.triggerName} />
 
         <InputNumber name='donationAmount' addonBefore='후원 금액' min={1000} defaultValue={1000} onChange={handleDonationAmounChange} value={selectedVtpTrigger.donationAmount} />
+
+        <Radio.Group value={selectedVtpTrigger.donationContentCond} onChange={handleDonationContentCondChange}>
+          <Radio value='none'>사용 안함</Radio>
+          <Tooltip placement="top" title='후원 메시지와 일치하는 경우 조건을 만족합니다.'>
+            <Radio value='equal'>일치</Radio>
+          </Tooltip>
+          <Tooltip placement="top" title='후원 메시지에 포함하는 경우 조건을 만족합니다.'>
+            <Radio value='contain'>포함</Radio>
+          </Tooltip>
+        </Radio.Group>
+        <Input name='donationContent' addonBefore='후원 메시지' disabled={selectedVtpTrigger.donationContentCond === 'none'} value={selectedVtpTrigger.donationContent} onChange={handleDonationContentChange} />
 
         <Row>
           <Col style={{ paddingRight: '8px', paddingBottom: '8px' }}>
