@@ -40,6 +40,7 @@ export default function ToonationSettingInput() {
       if(!successLoad) {
         setConnectionLoading(false);
         openFailedNotification('연결에 실패하였습니다.');
+        return;
       }
 
       await toonation.connect(handleToonation);

@@ -34,7 +34,7 @@ export class Twip {
           console.log(`Get Twip token succeed : ${this.token}`);
         }
         else {
-          console.error("Get Twip token parse failed.");
+          throw new Error("Get Twip token parse failed.");
         }
 
         // version
@@ -44,15 +44,18 @@ export class Twip {
           console.log(`Get Twip version succeed : ${this.twipVersion}\n`);
         }
         else {
-          console.error("Get Twip version parse failed.\n");
+          throw new Error("Get Twip version parse failed.\n");
         }
       }
       else {
-        console.error("Get Twip token and version failed.");
+        throw new Error("Get Twip token and version failed.");
       }
+
+      return true;
     }
     catch (e) {
       console.error("Error get Twip token, version: " + e.toString());
+      return false;
     }
   }
 
@@ -68,7 +71,9 @@ export class Twip {
     const client = new WebSocketClient();
 
     client.on('connectFailed', (e) => {
+      this.connected = false;
       console.error('ERROR:', `failed to connect twip websocket(${e.toString()})`);
+      cb('connect-failed', undefined, this);
     });
 
     client.on('connect', (connection) => {
@@ -85,6 +90,7 @@ export class Twip {
       connection.on('error', (error) => {
         this.connected = false;
         console.error('Error:', `Twip Connection(${error.toString()})`);
+        cb('error', undefined, this);
       });
 
       connection.on('close', () => {

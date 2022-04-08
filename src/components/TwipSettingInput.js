@@ -34,7 +34,12 @@ export default function TwipSettingInput() {
 
     // 투네이션 알림 연동
     const twip = new Twip(twipKey);
-    await twip.loadToken();
+    const successLoad = await twip.loadToken();
+    if(!successLoad) {
+      setConnectionLoading(false);
+      openFailedNotification('연결에 실패하였습니다.');
+      return;
+    }
     await twip.connect(handleTwip);
   }
 
@@ -65,6 +70,11 @@ export default function TwipSettingInput() {
           // 재연결 수행
           self.connect(handleTwip);
         }
+        break;
+      }
+      case 'connect-failed': {
+        setConnectionLoading(false);
+        openFailedNotification('연결에 실패하였습니다.');
         break;
       }
       default: {
