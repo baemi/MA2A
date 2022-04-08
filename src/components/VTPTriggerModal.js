@@ -150,7 +150,7 @@ export default function VTPTriggerModal({ isOpenVtpTriggerModal, closeVtpTrigger
 
   return (
     <Modal
-      title='VTP 트리거'
+      title='Vtuber Plus 트리거'
       centered
       visible={isOpenVtpTriggerModal}
       onOk={() => saveTrigger(selectedVtpTrigger)}

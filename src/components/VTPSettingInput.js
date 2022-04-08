@@ -205,18 +205,18 @@ export default function VTPSettingInput() {
           </Tooltip>
         </>
       }
-      // style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}
+    // style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 6px 12px rgba(80,80,80,0.2)' }}
     >
       <Row align='middle'>
-        <Col flex="auto" style={{ padding: '4px' }}>
+        <Col flex="auto" style={{ marginRight: 4 }}>
           <Input addonBefore='IP' id='vtpIp' name='vtpIp' placeholder='VTP Websocket Server IP' value={vtpIp} onChange={handleChange} />
         </Col>
 
-        <Col flex="auto" style={{ padding: '4px' }}>
+        <Col flex="auto" style={{ marginRight: 4 }}>
           <Input addonBefore='PORT' id='vtpPort' name='vtpPort' placeholder='VTP Websocket Server PORT' value={vtpPort} onChange={handleChange} />
         </Col>
 
-        <Col flex='24px' style={{ padding: '4px' }}>
+        <Col flex='24px' style={{ marginRight: 4 }}>
           <Tooltip placement='top' title='연결'>
             <Button
               disabled={connected}
@@ -242,13 +242,22 @@ export default function VTPSettingInput() {
             />
           </Tooltip>
         </Col>
+        <Col>
+          <div style={{ fontSize: '12px', color: `${connected ? '#1890ff' : '#f5222d'}`, marginTop: '4px', marginLeft: '4px' }}>{connected ? '연결 중' : '연결 끊김'}</div>
+        </Col>
       </Row>
-      <div style={{ fontSize: '12px', color: `${connected ? '#1890ff' : '#f5222d'}`, marginTop: '4px', marginLeft: '4px' }}>{connected ? '연결 중' : '연결 끊김'}</div>
-      <br />
-      <Row>
+      <Row style={{ marginTop: 8 }}>
         <Col flex='auto'>
           <Tooltip placement='top' title={vtpCustomItemPath}>
-            <Input addonBefore='커스텀 아이템 폴더 경로' id='vtpCustomItemPath' name='vtpCustomItemPath' placeholder='VTP 커스텀 아이템이 저장된 경로를 입력하세요' value={vtpCustomItemPath} onChange={handleChange} />
+            <Input
+              addonBefore={
+                <>
+                  커스텀 아이템 폴더 경로 <Tooltip placement='topRight' title='Vtuber Plus가 설치된 폴더 > VTuber Plus_Data > Useritem 폴더의 경로를 입력합니다.(예: D:\twitch\VTuber Plus v3_5_1\VTuber Plus_Data\Useritem)'>
+                    <QuestionCircleOutlined size='large' />
+                  </Tooltip>
+                </>
+              }
+              id='vtpCustomItemPath' name='vtpCustomItemPath' placeholder='VTP 커스텀 아이템이 저장된 경로를 입력하세요' value={vtpCustomItemPath} onChange={handleChange} />
           </Tooltip>
         </Col>
         <Col>
