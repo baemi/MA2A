@@ -5,6 +5,7 @@
   bottom: 0;
   background-color: white;
   width: 100vw;
+  height: 100vh;
 
   transition: all 0.3s;
 
@@ -13,4 +14,16 @@
 
 .vtp-setting-panel.open {
   left: 0;
+}
+
+.ant-table-header thead th.ant-table-cell {
+  text-align: center;
+}
+
+.ant-table-header thead th.ant-table-cell.donation-header-cell {
+  text-align: center !important;
+}
+
+.donation-header-cell-min {
+  min-width: 100px;
 }

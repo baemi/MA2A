@@ -1,15 +1,15 @@
 import './panel.css';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { selectedVtpTriggerState, vtpTriggerListState } from '../store/vtp';
 
-import { Row, Col, Card, Button, Space } from 'antd';
+import { Row, Col, Card, Button, Space, Modal } from 'antd';
 import { CloseOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 
 import VTPTriggerList from './VTPTriggerList';
-import VTPTriggerForm from './VTPTriggerForm';
 import { openFailedNotification, openSuccessNotification } from '../util/noti';
+import VTPTriggerModal from './VTPTriggerModal';
 
 const electronFs = window.require('fs');
 const electronPath = window.require('path');
@@ -19,6 +19,8 @@ export default function VTPTriggerSettingPanel() {
 
   const [selectedVtpTrigger, setSelectedVtpTrigger] = useRecoilState(selectedVtpTriggerState);
   const [vtpTriggerList, setVtpTriggerList] = useRecoilState(vtpTriggerListState);
+
+  const [isOpenVtpTriggerModal, setIsOpenVtpTriggerModal] = useState(false);
 
   useEffect(() => {
     window.vtpTriggerList = vtpTriggerList;
@@ -47,22 +49,22 @@ export default function VTPTriggerSettingPanel() {
     try {
       const filepath = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), options);
 
-      if(!filepath.canceled) {
+      if (!filepath.canceled) {
         const fileBuffer = electronFs.readFileSync(filepath.filePaths[0]);
         const uploadedVtpTriggerList = JSON.parse(fileBuffer);
 
         const validTriggerList = uploadedVtpTriggerList.map(trigger => {
-          if(!trigger.donationContentCond) {
+          if (!trigger.donationContentCond) {
             trigger.donationContentCond = 'none';
             trigger.donationContent = '';
           }
           return trigger;
         });
-  
+
         setVtpTriggerList(validTriggerList);
 
         openSuccessNotification('가져오기 성공');
-      }  
+      }
     } catch (e) {
       openFailedNotification('잘못된 파일입니다.');
     }
@@ -81,11 +83,19 @@ export default function VTPTriggerSettingPanel() {
     };
 
     const result = await remote.dialog.showSaveDialog(remote.getCurrentWindow(), options);
-    if(!result.canceled) {
+    if (!result.canceled) {
       const file = electronFs.createWriteStream(result.filePath);
       file.write(JSON.stringify(vtpTriggerList));
       file.end();
     }
+  }
+
+  const openVtpTriggerModal = () => {
+    setIsOpenVtpTriggerModal(true);
+  }
+
+  const closeVtpTriggerModal = () => {
+    setIsOpenVtpTriggerModal(false);
   }
 
   return (
@@ -102,19 +112,17 @@ export default function VTPTriggerSettingPanel() {
       }
       id='vtpPanel'
       className='vtp-setting-panel'
-      bodyStyle={{ position: 'absolute', top: '60px', left: 0, right: 0, bottom: '0' }}
     >
-      <Row style={{ height: '100%'}}>
-        {/* VTP 트리거 목록 */}
-        <Col span={16}>
-          <VTPTriggerList handleCustomItemUseChange={handleCustomItemUseChange} />
+      <Row>
+        <Col style={{ marginBottom: 8 }}>
+          <Button onClick={openVtpTriggerModal}>트리거 추가</Button>
         </Col>
-        {/* VTP 폼 */}
-        <Col span={8}>
-          <VTPTriggerForm />
+        <Col>
+          <VTPTriggerList handleCustomItemUseChange={handleCustomItemUseChange} openVtpTriggerModal={openVtpTriggerModal} />
         </Col>
       </Row>
 
+      <VTPTriggerModal isOpenVtpTriggerModal={isOpenVtpTriggerModal} closeVtpTriggerModal={closeVtpTriggerModal} />
     </Card>
   )
 }

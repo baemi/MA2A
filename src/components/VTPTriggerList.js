@@ -3,10 +3,10 @@ import React from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { vtpTriggerListState, selectedVtpTriggerState, selectingVtpTriggerState } from '../store/vtp';
 
-import { Switch, Table, Row, Col, Space, Button, Tag } from 'antd';
+import { Switch, Table, Row, Col, Space, Button, Tag, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
+export default function VTPThrowTriggerList({ handleCustomItemUseChange, openVtpTriggerModal }) {
 
   const [vtpTriggerList, setVtpTriggerList] = useRecoilState(vtpTriggerListState);
 
@@ -23,6 +23,8 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
 
     setSelectedVtpTrigger(item);
     setSelectingVtpTrigger(true);
+
+    openVtpTriggerModal();
   }
 
   const delVTPTriggerItem = (item) => {
@@ -36,11 +38,21 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       title: '이름',
       dataIndex: 'triggerName',
       key: 'triggerName',
+      ellipsis: {
+        showTitle: false,
+      },
+      render: name => (
+        <Tooltip placement="topLeft" title={name}>
+          {name}
+        </Tooltip>
+      ),
     },
     {
       title: '메소드',
       dataIndex: 'method',
       key: 'method',
+      align: 'center',
+      width: 100,
       render: (text) => {
         let methodName = '던지기';
         if(text === 'VTP_Drop') {
@@ -53,10 +65,17 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       title: '후원금액',
       dataIndex: 'donationAmount',
       key: 'donationAmount',
+      width: 100,
+      align: 'right',
+      className: 'donation-header-cell',
+      render: amount => {
+        return amount.toLocaleString('ko-KR')
+      }
     },
     {
       title: '플랫폼',
       dataIndex: 'platform',
+      className: 'donation-header-cell-min',
       render: (platformList) => {
         return (
           <>
@@ -72,14 +91,24 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       title: '개수',
       dataIndex: 'count',
       key: 'count',
+      align: 'center',
+      width: 50
     },
     {
       title: '아이템',
       render: (text, item) => {
         if(item.isCustomItem) {
-          return item.customItemName;
+          return (
+            <>
+              <Tag color='#fa8c16'>커스텀</Tag>{item.customItemName}
+            </>
+          )
         } else {
-          return item.itemName;
+          return (
+            <>
+              <Tag color='#bfbfbf'>기본</Tag>{item.itemName}
+            </>
+          )
         }
       }
     },
@@ -87,11 +116,15 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       title: '데미지',
       dataIndex: 'damage',
       key: 'damage',
+      align: 'center',
+      width: 60
     },
     {
       title: '사용여부',
       dataIndex: 'useAt',
       key: 'useAt',
+      align: 'center',
+      width: 80,
       render: (text, item) => (
         <Switch checkedChildren="Y" unCheckedChildren="N" checked={item.useAt} onChange={(value) => { handleCustomItemUseAtChange(item, value); }} />
       )
@@ -99,6 +132,8 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
     {
       title: '',
       key: 'action',
+      align: 'center',
+      width: 120,
       render: (text, item) => (
         <Row wrap={false} align='middle' justify='center' style={{ width: '100%'}}>
           <Col flex='72px'>
@@ -118,8 +153,8 @@ export default function VTPThrowTriggerList({ handleCustomItemUseChange }) {
       columns={columns}
       rowKey={(record) => (record.triggerName)}
       pagination={false}
-      style={{ position: 'absolute', overflow: 'auto', top: 0, bottom: 0, left: 0, right: '20px' }}
-      scroll={{ y: 520 }}
+      size="middle"
+      scroll={{ y: 'calc(100vh - 220px)' }}  // 테이블 헤더 고정을 위한 테이블 바디 높이 고정 값 지정
     />
   )
 }

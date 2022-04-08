@@ -20,15 +20,18 @@ function App() {
   return (
     <RecoilRoot>
       <div id='app' className='app'>
-        <ToonationSettingInput />
-        <br/>
-        <TwipSettingInput />
-        <br />
-        <VTPSettingInput />
-        <br />
-        <Button onClick={openVTPSettingPanel} icon={<SettingOutlined />}>VTP 트리거 설정</Button>
+        <div className='content'>
+          <ToonationSettingInput />
+          <br />
+          <TwipSettingInput />
+          <br />
+          <VTPSettingInput />
+          <br />
+          <Button onClick={openVTPSettingPanel} icon={<SettingOutlined />}>VTP 트리거 설정</Button>
+        </div>
         <VTPTriggerSettingPanel />
       </div>
+
     </RecoilRoot>
   );
 }
