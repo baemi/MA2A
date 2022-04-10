@@ -72,7 +72,7 @@ export class Toonation {
       cb('connect', this.connected, this);
 
       // Send pings every 12000ms when websocket is connected
-      this.pingLoopHandle = setInterval(() => { this.ping() }, 11000);
+      this.pingLoopHandle = setInterval(() => { this.ping() }, 12000);
 
       connection.on('error', (error) => {
         this.connected = false;

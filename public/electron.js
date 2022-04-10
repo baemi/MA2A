@@ -2,25 +2,23 @@ const { app, BrowserWindow, globalShortcut } = require('electron');
 const path = require('path');
 require('@electron/remote/main').initialize();
 
+// 빌드 시 주석
 // process.env.MODE='dev';
 
 app.whenReady().then(() => {
   const winOptions = {
-    width: 1350,  
-    height: 800,
-    minWidth: 1350,
-    minHeight: 800,
+    width: 870,  
+    height: 550,
+    minWidth: 870,
+    minHeight: 395,
     show: false,
-    // icon: path.join(__dirname, 'build/icon.ico'),
     webPreferences: {  
       nodeIntegration: true, 
       contextIsolation : false
     } 
   };
 
-  if(process.env.MODE !== 'dev') {
-    winOptions.autoHideMenuBar = true;
-  }
+  winOptions.autoHideMenuBar = true;
 
   const win = new BrowserWindow(winOptions);
 
@@ -36,7 +34,6 @@ app.whenReady().then(() => {
     win.loadFile(
       `${path.join(__dirname, '../build/index.html')}`
     );
-    // win.webContents.openDevTools();
   }
 
   const splash = new BrowserWindow({
