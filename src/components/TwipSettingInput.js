@@ -86,7 +86,7 @@ export default function TwipSettingInput() {
   }
 
   const handleTwipMessage = (twipMsg) => {
-    const onlyTxtDona = null === twipMsg.variation_id;
+    const onlyTxtDona = !/\[[a-zA-Z_0-9]+:[a-zA-Z_0-9]+:[a-zA-Z_0-9]+\]/.test(twipMsg.comment);  // 영상 후원 제외
 
     if (onlyTxtDona) {
       const amount = twipMsg.amount;
