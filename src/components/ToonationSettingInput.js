@@ -148,7 +148,7 @@ export default function ToonationSettingInput() {
         if (!manualDisconnect) {
           console.log('투네이션을 재연결합니다.');
           // 재연결 수행
-          self.connect(handleToonation);
+          self.connect(handleToonationMini);
         }
         break;
       }
