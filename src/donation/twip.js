@@ -68,7 +68,7 @@ export class Twip {
     }
 
     this.disconnect(false);
-    const client = new WebSocketClient();
+    const client = new WebSocketClient({ closeTimeout: 10000 });
 
     client.on('connectFailed', (e) => {
       this.connected = false;

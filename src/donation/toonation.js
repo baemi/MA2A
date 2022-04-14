@@ -47,15 +47,15 @@ export class Toonation {
   }
 
   async connect(cb) {
-    if(!cb) cb = () => {};
+    if (!cb) cb = () => { };
 
-    if(!this.payload) {
+    if (!this.payload) {
       console.log('not found toonation payload');
       return false;
     }
 
     this.disconnect(false);
-    const client = new WebSocketClient();
+    const client = new WebSocketClient({ closeTimeout: 10000 });
 
     client.on('connectFailed', (e) => {
       this.connected = false;
@@ -72,7 +72,18 @@ export class Toonation {
       cb('connect', this.connected, this);
 
       // Send pings every 12000ms when websocket is connected
-      this.pingLoopHandle = setInterval(() => { this.ping() }, 12000);
+      // this.pingLoopHandle = setInterval(() => { this.ping() }, 12000);
+      const ping = () => {
+        if (!this.connected) {
+          return;
+        }
+
+        this.pingLoopHandle = setTimeout(function () {
+          connection.send("#ping");
+          ping();
+        }, 12000);
+      }
+      ping();
 
       connection.on('error', (error) => {
         this.connected = false;
@@ -91,7 +102,7 @@ export class Toonation {
 
       connection.on('message', (message) => {
         try {
-          if (message.type === 'utf8') {
+          if (message.type === 'utf8' && message.utf8Data !== '#pong') {
             const data = JSON.parse(message.utf8Data);
             // data.code === 101(후원)
             if (data.content && data.code && 101 === data.code) {  // 미니후원(code: 111 | 112)
@@ -111,8 +122,9 @@ export class Toonation {
   disconnect(manual) {
     this.manualDisconnect = manual;
 
-    clearInterval(this.pingLoopHandle);
-    if(this.wsConnection) {
+    // clearInterval(this.pingLoopHandle);
+    clearTimeout(this.pingLoopHandle);
+    if (this.wsConnection) {
       this.wsConnection.close();
     }
   }
@@ -124,10 +136,11 @@ export class Toonation {
 
   // 투네이션 알림 연결 유지를 위한 Ping 전송
   ping() {
-    if(!this.isConnected() || !this.wsConnection) {
+    if (!this.isConnected() || !this.wsConnection) {
       return false;
     }
 
+    console.log(`send ping - ${new Date()}`);
     this.wsConnection.ping("#ping");
   }
 

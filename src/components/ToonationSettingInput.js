@@ -91,6 +91,7 @@ export default function ToonationSettingInput() {
           openFailedNotification('연결에 실패하였습니다.');
         }
 
+        setConnectionLoading(false);
         setConnected(data);
         break;
       }
@@ -103,10 +104,16 @@ export default function ToonationSettingInput() {
         setConnected(false);
 
         const manualDisconnect = data;
-        if (!manualDisconnect) {
-          console.log('투네이션을 재연결합니다.');
+        if (!manualDisconnect && !connectionLoading && !connected) {
+          console.log('투네이션을 재연결합니다. 10초 정도 소요됩니다...');
           // 재연결 수행
-          self.connect(handleToonation);
+
+          setConnectionLoading(true);
+
+          // 재연결 수행
+          setTimeout(() => {
+            self.connect(handleToonation);
+          }, 10000);
         }
         break;
       }
@@ -133,6 +140,7 @@ export default function ToonationSettingInput() {
           openFailedNotification('연결에 실패하였습니다.');
         }
 
+        setConnectionLoading(false);
         setConnectedMini(data);
         break;
       }
@@ -145,10 +153,15 @@ export default function ToonationSettingInput() {
         setConnectedMini(false);
 
         const manualDisconnect = data;
-        if (!manualDisconnect) {
-          console.log('투네이션을 재연결합니다.');
+        if (!manualDisconnect && !connectionLoadingMini && !connectedMini) {
+          console.log('투네이션을 재연결합니다. 10초 정도 소요됩니다...');
+
+          setConnectionLoading(true);
+
           // 재연결 수행
-          self.connect(handleToonationMini);
+          setTimeout(() => {
+            self.connect(handleToonationMini);
+          }, 10000);
         }
         break;
       }

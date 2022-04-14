@@ -53,6 +53,7 @@ export default function TwipSettingInput() {
           openFailedNotification('연결에 실패하였습니다.');
         }
 
+        setConnectionLoading(false);
         setConnected(data);
         break;
       }
@@ -66,9 +67,14 @@ export default function TwipSettingInput() {
 
         const manualDisconnect = data;
         if (!manualDisconnect) {
-          console.log('트윕을 재연결합니다.');
+          console.log('트윕을 재연결합니다. 10초 정도 소요됩니다...');
+
+          setConnectionLoading(true);
+
           // 재연결 수행
-          self.connect(handleTwip);
+          setTimeout(() => {
+            self.connect(handleTwip);
+          }, 10000);
         }
         break;
       }
